@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Info windows</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+// This example displays a marker at the center of Australia.
+// When the user clicks the marker, an info window opens.
+
+function CreateAnimalsArray() {
+var strAnimals = "51.4583567|-2.6296504|falcon|Peregrine Falcon|Falco perigrinus|Species|Peregrine Falcon|Peregrine falcons are one of, if not the, fastest animals in the world. They are believed to achieve speeds of over 300 kph when plunging from the sky after prey. This iconic bird of prey is also one of the world's most widely distributed birds, found on every continent except Antarctica. Peregrines prefer open landscapes, but are increasingly exploiting towns and cities where there are tall buildings for nesting and plenty of pigeons for prey. Unlucky victims are captured in vicious talons after a lightning dive from above, but the killing stroke is delivered by the deadly beak.# \
+51.4522035|-2.5981381|swan|Mute Swan|Cygnus olor|Species|Mute Swan|Mute swans are a familiar and impressive sight in Britain. Often found on ponds and rivers in parks and other urban areas. By tradition, all mute swans belong to the monarch. They are one of Britain's largest and heaviest birds, with a wingspan of up to 2.4 metres. Male swans are highly territorial and first threaten intruders, striking an aggressive pose with wings arched over their back, before charging at them to chase them off.# \
+51.4569294|-2.6341917|badger|Badger|Meles meles|Species|Eurasian Badger, European Badger|Badgers are nocturnal and elusive, but remain one of the UK's favourite mammals. Like humans, they are omnivorous, although unlike us, they eat several hundred earthworms every night. Badgers are social creatures and live together in large underground setts, comprised of a series of interlocking tunnels with nest chambers, toilets and several entrances. They inherit these setts from their parents, while always expanding and refining them. The resulting huge tunnel systems are, in some cases, centuries old. Why use culling to manage wildlife?# \
+51.5364778|-2.5452795|fox|Red Fox|Vulpes vulpes|species|Red Fox|Red foxes have overtaken grey wolves as the most widespread canines in the wild. Distributed throughout the northern hemisphere, red foxes are highly adaptable and occupy territories in deserts and tundra as well as urban areas. They live in family groups in dens and eat most things including small mammals, fruit, carrion and the contents of dustbins. As well as having excellent vision, smell and touch these bushy-tailed true foxes can produce 28 different calls."
+//	var strAnimals = "51.5364778|-2.5452795|fox|Red Fox|scientific name|rank|common names|All about the city fox# \
+	//	51.4583567|-2.6296504|falcon|Our falcon|Here it is# \
+//		51.4583567|-2.6296504|swan|||Our swan|Here it is# \
+	//	51.4569294|-2.6341917|badger|||And a badger|It is asleep"
+	var Temp = strAnimals.split("#");
+	var aResult = new Array();
+	console.log("Lines found: " + Temp.length);
+	for (var intI = 0; intI < Temp.length; intI ++)
+	{
+		strLine = Temp[intI];
+		Temp2 = strLine.split("|");
+		objAnimal = new Object();
+		objAnimal.x = Temp2[0];
+		objAnimal.y = Temp2[1];
+		objAnimal.icon = Temp2[2];
+		objAnimal.name = Temp2[3];
+		objAnimal.Scientific = Temp2[4];
+		objAnimal.Rank = Temp2[5];
+		objAnimal.Common = Temp2[6]
+		objAnimal.description = Temp2[7];
+		aResult.push(objAnimal);
+	}
+	console.log("Done");
+	return aResult;
+}
+
+function initialize() {
+//  var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+  var myLatlng = new google.maps.LatLng(54.3172648,4.3045766);
+  var mapOptions = {
+    zoom: 5,
+    center: myLatlng
+  };
+
+//	var Animals = [ {x:51.5364778,y:-2.5452795,name:'fox', title:'The city fox', description: 'All about the city fox'},
+	//				{x:51.4583567,y:-2.6296504,name:'falcon', title: 'Our falcon', description: 'Here it is'},
+		//			{x:51.4569294,y:-2.6341917,name:'badger', title: 'And a badger', description: 'It is asleep'}]
+					
+  var Animals = CreateAnimalsArray()
+  
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+//  var strContent = '<div id = "mycontent" >' +
+	//			'<h1 class = "firstHeading">' + 
+  
+	function CreateMarker(objAnimal){
+		var myLatlng = new google.maps.LatLng(objAnimal.x,objAnimal.y);	
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			title: objAnimal.name,
+			icon: 'images/' + objAnimal.icon + '.png'
+		});
+	
+	return marker;
+	}
+
+	function SetRH(strName){
+		objImage = document.getElementById("ugcimage");
+		objImage.src = "images/rh" + strName + ".png";
+	}
+	
+	function CreateInfoWindow(objAnimal){
+	
+	//	objAnimal.name = Temp2[3];
+//		objAnimal.Scientific = Temp2[4];
+	//	objAnimal.Rank = Temp2[5];
+//		objAnimal.Common = Temp2[6]
+//		objAnimal.description = Temp2[7];
+	
+//		var strContent = "<div style = 'width:300px;'><p>Content for " + objAnimal.icon + "</p></div>";
+		
+		var strContent = "<div style ='width:400px; '>" + 
+			"<h1>" + objAnimal.name + "</h1>" + 
+			"<p>Scientific name: " + objAnimal.Scientific + "<br>" +
+			"Rank: " + objAnimal.Rank + "<br>" +
+			"Common name(s): " + objAnimal.Common + "</p>" +
+			"<p>" + objAnimal.description + "</p>" +
+			"</div>";
+	
+		var infowindow = new google.maps.InfoWindow({
+        content: strContent
+		});
+		return infowindow;
+	}
+
+	objAnimal0 = Animals[0];
+	Marker0 = CreateMarker(objAnimal0);
+	InfoWindow0 = CreateInfoWindow(objAnimal0);
+	google.maps.event.addListener(Marker0, 'click', function() {
+	InfoWindow0.open(map,Marker0);
+	SetRH("falcon");
+	});
+	
+	objAnimal1 = Animals[1];
+	Marker1 = CreateMarker(objAnimal1);
+	InfoWindow1 = CreateInfoWindow(objAnimal1);
+	google.maps.event.addListener(Marker1, 'click', function() {
+	InfoWindow1.open(map,Marker1);
+	SetRH("swan");
+	});
+	
+	objAnimal2 = Animals[2];
+	Marker2 = CreateMarker(objAnimal2);
+	InfoWindow2 = CreateInfoWindow(objAnimal2);
+	google.maps.event.addListener(Marker2, 'click', function() {
+	InfoWindow2.open(map,Marker2);
+	SetRH("fox");
+	});
+	
+	objAnimal3 = Animals[3];
+	Marker3 = CreateMarker(objAnimal3);
+	InfoWindow3 = CreateInfoWindow(objAnimal3);
+	google.maps.event.addListener(Marker3, 'click', function() {
+	InfoWindow3.open(map,Marker3);
+	SetRH("badger");
+	});
+	
+  for (intI = 0; intI < 0; intI ++)
+  {
+	console.log(intI);
+	objAnimal = Animals[intI];
+	Marker = CreateMarker(objAnimal);
+	InfoWindow = CreateInfoWindow(objAnimal);
+	google.maps.event.addListener(Marker, 'click', function() {
+	InfoWindow.open(map,Marker);
+	});
+}
+
+
+//  google.maps.event.addListener(map, 'tilesloaded', function() {
+//  infowindow.open(map,marker);
+//});	
+  
+//  infowindow.open(map,marker);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas" style= "width: 70%; float: left;"></div>
+	<div id="ugc" style= "width: 30%; float: left;"><img id="ugcimage" src="images/white.png"></div>
+  </body>
+</html>
